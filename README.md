@@ -41,22 +41,45 @@
 
 ---
 
-## 使用 Docker 运行
+## Docker 部署
 
-无需自行构建镜像，直接按照以下步骤运行：
+### Git Clone 仓库自行构建
 
-### 启动容器
+1. **构建镜像**
 
-使用以下命令运行容器，并挂载 `.env` 配置文件：
+    首先，克隆本项目仓库到本地：
+
+    ```bash
+    git clone https://github.com/kafuuchino-s/netcup-traffic-reset
+    cd netcup-traffic-reset
+    ```
+
+    然后，使用以下命令构建 Docker 镜像：
+
+    ```bash
+    docker build -t netcup-traffic-reset:latest .
+    ```
+
+2. **运行容器**
+
+    构建完成后，使用以下命令运行容器，并挂载 `.env` 配置文件：
+
+    ```bash
+    docker run --rm -d \
+      --env-file .env \
+      --name netcup-traffic-reset \
+      netcup-traffic-reset:latest
+    ```
+
+### 使用 kafuuchino520/netcup-traffic-reset 镜像直接启动
+
+可以直接使用 Docker Hub 上提供的预构建镜像来运行：
 
 ```bash
-docker build -t netcup-traffic-reset:latest .
-docker tag netcup-traffic-reset:latest kafuuchino520/netcup-traffic-reset:latest
-docker push kafuuchino520/netcup-traffic-reset:latest
 docker run --rm -d \
   --env-file .env \
   --name netcup-traffic-reset \
-  kafuuchino520/netcup-traffic-reset
+  kafuuchino520/netcup-traffic-reset:latest
 ```
 
 ---
@@ -68,7 +91,7 @@ docker run --rm -d \
     -   重启 Netcup vServer（通过 Power Cycle 或 ACPI 重启）。
     -   检查网络状态恢复后，重新启动种子任务。
 2. **定时任务支持**
-    -   通过 `.env` 文件中的 `CRON_SCHEDULE` 设置定时任务时间，默认为每天凌晨 4 点。
+    -   通过 `.env` 文件中的 `DAILY_TASK_TIME` 设置定时任务时间，默认为每天凌晨 4 点。
 3. **轻量化部署**
     -   使用官方 Docker 镜像快速部署，无需安装复杂的依赖环境。
 
@@ -83,7 +106,7 @@ docker run --rm -d \
     -   检查 `.env` 文件中 `NETCUP_CUSTOMER_ID` 和 `NETCUP_API_PASSWORD` 是否正确。
     -   确保您已在 Netcup SCP 后台启用“Activate Webservice”功能，并使用正确的 Webservice 密码。
 3. **定时任务未生效？**
-    -   确保 `.env` 文件中 `CRON_SCHEDULE` 格式正确。
+    -   确保 `.env` 文件中 `DAILY_TASK_TIME` 格式正确。
     -   若修改了 `.env`，请重新启动容器。
 
 ---
