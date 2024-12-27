@@ -60,7 +60,7 @@
     docker build -t netcup-traffic-reset:latest .
     ```
 
-2. **运行容器**
+    **运行容器**
 
     构建完成后，使用以下命令运行容器，并挂载 `.env` 配置文件：
 
@@ -73,6 +73,9 @@
 
 ### 使用 kafuuchino520/netcup-traffic-reset 镜像直接启动
 
+**注意：预构建的 Docker 镜像仅适用于 `amd64` 架构的机器。`arm64` 架构的用户，请参考上一节 “Git Clone 仓库自行构建”。**
+**警告：请勿将此项目部署在需要重启的 Netcup 服务器上！**
+
 可以直接使用 Docker Hub 上提供的预构建镜像来运行：
 
 ```bash
@@ -81,6 +84,40 @@ docker run --rm -d \
   --name netcup-traffic-reset \
   kafuuchino520/netcup-traffic-reset:latest
 ```
+
+---
+
+## 多服务器部署
+
+你可以通过创建多个 `.env` 文件，并分别指定给 Docker 容器，来实现对多个 Netcup 服务器的管理。
+
+1. **创建不同的 `.env` 文件**
+
+    例如，为每个服务器创建一个 `.env` 文件，如 `server1.env`，`server2.env`，等等：
+
+    ```
+    ├── server1.env
+    └── server2.env
+    ```
+
+    在每个 `.env` 文件中，配置对应服务器的 Netcup API 信息和 qBittorrent 信息。
+
+2. **运行 Docker 容器并指定不同的 `.env` 文件**
+
+    使用 `--env-file` 参数指定不同的 `.env` 文件来启动 Docker 容器：
+
+    ```bash
+    docker run --rm -d \
+      --env-file server1.env \
+      --name netcup-traffic-reset-server1 \
+      kafuuchino520/netcup-traffic-reset:latest
+    
+    docker run --rm -d \
+      --env-file server2.env \
+      --name netcup-traffic-reset-server2 \
+      kafuuchino520/netcup-traffic-reset:latest
+    ```
+    自行构建的请将`kafuuchino520/netcup-traffic-reset:latest`改为`netcup-traffic-reset:latest`
 
 ---
 
@@ -116,6 +153,7 @@ docker run --rm -d \
 -   **配置简单**：通过 `.env` 文件集中管理所有配置项。
 -   **部署便捷**：使用官方 Docker 镜像，无需额外构建。
 -   **自动化流程**：支持定时任务，轻松实现服务器流量重置和种子任务管理。
+-   **支持多服务器管理**: 通过不同的 `.env` 文件，可以轻松管理多个 Netcup 服务器。
 
 ## 项目引用
 
