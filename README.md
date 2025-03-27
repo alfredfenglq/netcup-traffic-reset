@@ -1,68 +1,68 @@
 # Netcup Traffic Reset
 
-[English Version](README_EN.md) | 中文版本
+English Version
 
 ## Netcup Traffic Reset
 
-本项目是一个用于自动化管理 **Netcup vServer** 和 **qBittorrent** 下载任务的工具，通过调用 Netcup API 和 qBittorrent API，实现服务器的自动重启以及种子任务的暂停/恢复。
+This project is a tool for automatically managing **Netcup vServer** and **qBittorrent** download tasks. By calling the Netcup API and qBittorrent API, it automates server restarts and the pausing/resuming of torrent tasks.
 
 ---
 
-## 环境变量配置
+## Environment Variable Configuration
 
-在运行项目之前，请按照以下步骤配置环境变量：
+Before running the project, please configure the environment variables as follows:
 
-1. 将 `env.example` 文件复制为 `.env` 文件：
+1. Copy the `env.example` file to `.env`:
 
     ```bash
     cp .env.example .env
     ```
 
-2. 根据实际需求编辑 `.env` 文件，填写正确的配置信息：
+2. Edit the `.env` file according to your needs and fill in the correct configuration information:
 
     ```plaintext
-    # Netcup的客户ID
+    # Netcup Customer ID
     NETCUP_CUSTOMER_ID=your_customer_id
-    # Netcup 的网页 API 密码并非您的登录密码。
-    # 该密码需要在 Netcup SCP 后台右上角的“Options”选项中找到，具体为“Webservice”部分的“Webservice Password”。
-    # 同时，请确保启用“Activate Webservice”功能，并保存设置。
+    # The Netcup Web API password is not your login password.
+    # This password can be found in the "Options" menu in the top right corner of the Netcup SCP backend, specifically in the "Webservice" section under "Webservice Password".
+    # Please also ensure that the "Activate Webservice" function is enabled and save the settings.
     NETCUP_API_PASSWORD=your_api_password
-    # Netcup 的 VServer ID，同样在 SCP 控制台的“Server”列表中查看
+    # Netcup VServer ID, also found in the "Server" list in the SCP console
     DEFAULT_VSERVER=your_default_vserver
-    # qBittorrent Web API 的地址
+    # qBittorrent Web API address
     QB_API_URL=http://127.0.0.1:8080
-    # qBittorrent 登录用户名
+    # qBittorrent login username
     QB_USERNAME=admin
-    # qBittorrent 登录密码
+    # qBittorrent login password
     QB_PASSWORD=admin
-    # 定义每天任务的时间（24 小时制，格式：HH:MM）
+    # Define the daily task time (24-hour format, format: HH:MM)
     DAILY_TASK_TIME=04:00
     ```
 
 ---
 
-## Docker 部署
+## Docker Deployment
 
-### Git Clone 仓库自行构建
+### Git Clone Repository for Self-Building
 
-1. **构建镜像**
+1. **Build the Image**
 
-    首先，克隆本项目仓库到本地：
+    First, clone this project repository to your local machine:
 
     ```bash
     git clone https://github.com/kafuuchino-s/netcup-traffic-reset
     cd netcup-traffic-reset
     ```
 
-    然后，使用以下命令构建 Docker 镜像：
+    Then, use the following command to build the Docker image:
 
     ```bash
     docker build -t netcup-traffic-reset:latest .
     ```
 
-    **运行容器**
+2. **Run the Container**
 
-    构建完成后，使用以下命令运行容器，并挂载 `.env` 配置文件：
+    After building, use the following command to run the container and mount the `.env` configuration file:
 
     ```bash
     docker run --rm -d \
@@ -71,12 +71,12 @@
       netcup-traffic-reset:latest
     ```
 
-### 使用 kafuuchino520/netcup-traffic-reset 镜像直接启动
+### Directly Launch Using the kafuuchino520/netcup-traffic-reset Image
 
-**注意：预构建的 Docker 镜像仅适用于 `amd64` 架构的机器。`arm64` 架构的用户，请参考上一节 “Git Clone 仓库自行构建”。**
-**警告：请勿将此项目部署在需要重启的 Netcup 服务器上！**
+**Note: The pre-built Docker image is only for `amd64` architecture machines. Users with `arm64` architecture, please refer to the previous section "Git Clone Repository for Self-Building".**
+**Warning: Do not deploy this project on the Netcup server that needs to be restarted!**
 
-可以直接使用 Docker Hub 上提供的预构建镜像来运行：
+You can directly use the pre-built image provided on Docker Hub to run:
 
 ```bash
 docker run --rm -d \
@@ -87,24 +87,24 @@ docker run --rm -d \
 
 ---
 
-## 多服务器部署
+## Multi-Server Deployment
 
-你可以通过创建多个 `.env` 文件，并分别指定给 Docker 容器，来实现对多个 Netcup 服务器的管理。
+You can manage multiple Netcup servers by creating multiple `.env` files and specifying them separately to the Docker container.
 
-1. **创建不同的 `.env` 文件**
+1. **Create Different `.env` Files**
 
-    例如，为每个服务器创建一个 `.env` 文件，如 `server1.env`，`server2.env`，等等：
+    For example, create a `.env` file for each server, such as `server1.env`, `server2.env`, etc.:
 
     ```
     ├── server1.env
     └── server2.env
     ```
 
-    在每个 `.env` 文件中，配置对应服务器的 Netcup API 信息和 qBittorrent 信息。
+    In each `.env` file, configure the Netcup API information and qBittorrent information for the corresponding server.
 
-2. **运行 Docker 容器并指定不同的 `.env` 文件**
+2. **Run Docker Container and Specify Different `.env` Files**
 
-    使用 `--env-file` 参数指定不同的 `.env` 文件来启动 Docker 容器：
+    Use the `--env-file` parameter to specify different `.env` files to start the Docker container:
 
     ```bash
     docker run --rm -d \
@@ -117,47 +117,46 @@ docker run --rm -d \
       --name netcup-traffic-reset-server2 \
       kafuuchino520/netcup-traffic-reset:latest
     ```
-    自行构建的请将`kafuuchino520/netcup-traffic-reset:latest`改为`netcup-traffic-reset:latest`
+    For self-built images, please replace `kafuuchino520/netcup-traffic-reset:latest` with `netcup-traffic-reset:latest`
+---
+
+## Functionality Description
+
+1. **Automated Reset Process**
+    -   Pause qBittorrent torrent tasks.
+    -   Restart the Netcup vServer (via Power Cycle or ACPI restart).
+    -   After checking that the network status has recovered, restart the torrent tasks.
+2. **Scheduled Task Support**
+    -   Set the scheduled task time through `DAILY_TASK_TIME` in the `.env` file, defaulting to 4 AM daily.
+3. **Lightweight Deployment**
+    -   Quick deployment using the official Docker image, without the need to install complex dependencies.
 
 ---
 
-## 功能说明
+## Common Issues
 
-1. **自动化重置流程**
-    -   暂停 qBittorrent 的种子任务。
-    -   重启 Netcup vServer（通过 Power Cycle 或 ACPI 重启）。
-    -   检查网络状态恢复后，重新启动种子任务。
-2. **定时任务支持**
-    -   通过 `.env` 文件中的 `DAILY_TASK_TIME` 设置定时任务时间，默认为每天凌晨 4 点。
-3. **轻量化部署**
-    -   使用官方 Docker 镜像快速部署，无需安装复杂的依赖环境。
-
----
-
-## 常见问题
-
-1. **无法连接 qBittorrent API？**
-    -   检查 `.env` 文件中 `QB_API_URL` 是否填写正确。
-    -   确保 qBittorrent 的 Web API 已启用，并设置了正确的用户名和密码。
-2. **Netcup API 调用失败？**
-    -   检查 `.env` 文件中 `NETCUP_CUSTOMER_ID` 和 `NETCUP_API_PASSWORD` 是否正确。
-    -   确保您已在 Netcup SCP 后台启用“Activate Webservice”功能，并使用正确的 Webservice 密码。
-3. **定时任务未生效？**
-    -   确保 `.env` 文件中 `DAILY_TASK_TIME` 格式正确。
-    -   若修改了 `.env`，请重新启动容器。
+1. **Unable to connect to the qBittorrent API?**
+    -   Check if `QB_API_URL` in the `.env` file is filled in correctly.
+    -   Ensure that the qBittorrent Web API is enabled and that the correct username and password are set.
+2. **Netcup API call failed?**
+    -   Check if `NETCUP_CUSTOMER_ID` and `NETCUP_API_PASSWORD` in the `.env` file are correct.
+    -   Ensure that you have enabled the "Activate Webservice" function in the Netcup SCP backend and are using the correct Webservice password.
+3. **Scheduled task not taking effect?**
+    -   Ensure that the `DAILY_TASK_TIME` format in the `.env` file is correct.
+    -   If you have modified `.env`, please restart the container.
 
 ---
 
-## 总结
+## Summary
 
--   **配置简单**：通过 `.env` 文件集中管理所有配置项。
--   **部署便捷**：使用官方 Docker 镜像，无需额外构建。
--   **自动化流程**：支持定时任务，轻松实现服务器流量重置和种子任务管理。
--   **支持多服务器管理**: 通过不同的 `.env` 文件，可以轻松管理多个 Netcup 服务器。
+-   **Simple Configuration**: Manage all configuration items centrally through the `.env` file.
+-   **Convenient Deployment**: Use the official Docker image without the need for additional building.
+-   **Automated Process**: Supports scheduled tasks, making it easy to implement server traffic reset and torrent task management.
+-   **Supports Multi-Server Management**: Easily manage multiple Netcup servers with different `.env` files.
 
-## 项目引用
+## Project References
 
 -   [mihneamanolache/netcup-webservice](https://github.com/mihneamanolache/netcup-webservice)
 -   [qbittorrent-api](https://pypi.org/project/qbittorrent-api/)
 
-如有疑问或建议，欢迎提交 Issue！
+If you have any questions or suggestions, please submit an Issue!
