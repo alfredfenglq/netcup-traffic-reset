@@ -1,6 +1,6 @@
 # Netcup Traffic Reset
 
-[中文版本](README.md) | English Version
+English Version
 
 ## Netcup Traffic Reset
 
